@@ -1,0 +1,67 @@
+.slide.ng-leave {
+    position: relative;
+}
+.slide.ng-enter {
+    position: absolute;
+}
+.slide.ng-enter,
+.slide.ng-leave {
+    -webkit-transition: -webkit-transform 0.3s ease-in, opacity 0.3s ease-in;
+    -moz-transition: -moz-transform 0.3s ease-in, opacity 0.3s ease-in;
+    -o-transition: -o-transform 0.3s ease-in, opacity 0.3s ease-in;
+    transition: transform 0.3s ease-in, opacity 0.3s ease-in;
+}
+.slide.ng-enter,
+.slide.ng-leave.ng-leave-active {
+    -webkit-transform: scaleX(0.0001);
+    -o-transform: scaleX(0.0001);
+    transform: scaleX(0.0001);
+    opacity: 0;
+}
+.slide,
+.slide.ng-enter.ng-enter-active {
+    -webkit-transform: scaleX(1);
+    -o-transform: scaleX(1);
+    transform: scaleX(1);
+    opacity: 1;
+}
+.ext-content {
+    padding: 50px;
+    margin: 20px;
+    /*  background-color: #FFF2E0; */
+}
+.selectedIndex {
+    background-color: #90A4AE;
+}
+////
+body {
+    display: flex;
+}
+.file_input_div {
+    margin: auto;
+    width: 250px;
+    height: 40px;
+}
+.file_input {
+    float: left;
+}
+#file_input_text_div {
+    width: 200px;
+    margin-top: -8px;
+    margin-left: 5px;
+}
+.none {
+    display: none;
+}
+.videoItem {
+    /*
+    border-style: solid;
+    border-width: 1px;
+*/
+    height: 100%;
+    width: 100px;
+}
+#icon:focus {
+    outline: none;
+    border: 0;
+}

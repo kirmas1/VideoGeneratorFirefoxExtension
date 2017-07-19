@@ -1,0 +1,12 @@
+html, body {
+  width: 500px;
+}
+
+a {
+  margin: 30px;
+  display: inline-block;
+}
+
+.panel {
+  margin: 5px;
+}

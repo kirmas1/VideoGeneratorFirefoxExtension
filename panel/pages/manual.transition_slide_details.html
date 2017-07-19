@@ -1,0 +1,42 @@
+<md-card flex>
+    <div layout="row" layout-align="center center">
+        <h1 class="md-headline">Transition {{id}}</h1>
+    </div>
+    <md-card-content flex layout="column" layout-align="space-around none">
+
+        <!------------ Duration ---------------->
+        <div flex layout="row">
+            <md-slider-container flex="50">
+                <span>Total Duration (sec)</span>
+                <md-slider flex min="0" max="5" ng-model="item.duration" aria-label="duration" id="duration-slider">
+                </md-slider>
+                <md-input-container>
+                    <input flex type="number" ng-model="item.duration" aria-label="duration" aria-controls="duration-slider">
+                </md-input-container>
+            </md-slider-container>
+        </div>
+        <!------- Effect------->
+        <div flex layout="row">
+            <div flex="30" layout="row" layout-align="space-around none">
+                <md-input-container style="margin-right: 10px;">
+                    <label>Style</label>
+                    <md-select ng-model="item.effect.type">
+                        <md-option value="-1"><em>None</em></md-option>
+                        <md-option value="0"><em>Blend</em></md-option>
+                        <md-option value="1"><em>Unconver</em></md-option>
+                    </md-select>
+                </md-input-container>
+
+                <md-input-container>
+                    <label>Direction</label>
+                    <md-select ng-show="item.effect.type==1" ng-model="item.effect.uncover">
+                        <md-option value="0"><em>Left</em></md-option>
+                        <md-option value="1"><em>Right</em></md-option>
+                        <md-option value="2"><em>Down</em></md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+
+        </div>
+    </md-card-content>
+</md-card>
