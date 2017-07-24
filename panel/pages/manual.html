@@ -1,69 +1,112 @@
-<div layout="row">
-    <div layout="row" layout-align="space-between none" flex="25">
-       <div>
-        <!--------- Primary Add, Delete All and Generate Buttons  --------->
-        <input class="ng-hide" id="input-file-id" multiple type="file" custom-on-change="uploadFile" />
-        <label for="input-file-id" class="md-button md-icon-button md-accent md-hue-2">
-            <i class="material-icons">add_circle_outline</i>
-            <md-tooltip md-direction="top">Upload images</md-tooltip>
-        </label>
-        <!--testevent clearList()-->
-        <md-button ng-click="clearList()" class="md-icon-button md-warn md-hue-2" aria-label="Reset list">
-            <i class="material-icons">delete_forever</i>
-            <md-tooltip md-direction="top">Clear All</md-tooltip>
-        </md-button>
+<div layout="column" flex>
+<!--   <img id="abc" ng-src="{{testsrc}}">-->
+    <!--secondry buttons-->
+    <div layout="row" style="border:1px solid rgba(0,0,0,.1)">
+        <div layout="row" flex layout-align="space-between none">
 
-        <md-button ng-click="showConfirmGenerateVideo($event)" class="md-icon-button md-accent md-hue-2" aria-label="Generate">
-            <i class="material-icons">play_circle_outline</i>
-            <md-tooltip md-direction="top">Generate</md-tooltip>
-        </md-button>
-        </div>
-        <div layout="row" layout-align="end">
-            <input type="text" class="form-control" placeholder="Video Name" aria-describedby="basic-addon1" ng-model="video.name">
+            <div flex="15">
+                <!--------- Primary Add, Delete All and Generate Buttons  --------->
+                <md-button ng-click="toggle_spy()" class="md-icon-button md-accent md-hue-3" ng-class="myVar" aria-label="Start spy">
+                    <i class="material-icons">highlight</i>
+                    <md-tooltip md-direction="top">Object Spy</md-tooltip>
+                </md-button>
+
+                <input class="ng-hide" id="input-file-id" multiple type="file" custom-on-change="uploadFile" />
+                <label for="input-file-id" class="md-button md-icon-button md-accent">
+                    <i class="material-icons">add_circle_outline</i>
+                    <md-tooltip md-direction="top">Upload images</md-tooltip>
+                </label>
+
+                <md-button ng-click="clearList()" class="md-icon-button md-warn md-hue-2" aria-label="Reset list">
+                    <i class="material-icons">delete_forever</i>
+                    <md-tooltip md-direction="top">Clear All</md-tooltip>
+                </md-button>
+            </div>
+            <div flex="50" layout="row" layout-align="end center">
+                <div layout="row" flex layout-align="space-around center">
+                    <div layout="row" layout-align="start center">
+                        <input type="text" class="form-control" placeholder="Video Name" aria-describedby="Video Name" ng-model="video.name">
+                    </div>
+                    <input type="text" placeholder="audio" aria-describedby="basic-addon1" ng-model="video.name">
+                    <md-button class="md-raised md-accent" ng-click="showConfirmGenerateVideo($event)">Generate</md-button>
+                </div>
+            </div>
+            <!--
+                <md-button ng-click="showConfirmGenerateVideo($event)" class="md-icon-button md-accent md-hue-2" aria-label="Generate">
+                    <i class="material-icons">play_circle_outline</i>
+                    <md-tooltip md-direction="top">Generate</md-tooltip>
+                </md-button>
+-->
+
         </div>
     </div>
-</div>
-
-<div layout="row" flex>
-    <md-sidenav flex="25" md-is-locked-open="true" class="md-whiteframe-4dp slide" flex>
-        <md-list flex>
-
-            <!----------------Slides in the side List ----------------->
-
-            <div ng-repeat="item in slides" class="repeated-item">
-                <md-list-item ng-click="goToSlideDetails($index, item.type)" layout="row" ng-class="{'selectedIndex': selectedIndex==$index, 'md-2-line': item.type == 0, 'md-offset': item.type == 1}">
-                    <div flex="70" layout="row">
-                        <img ng-show="item.type==0" ng-src={{item.thumbnail}} class="md-avatar" alt="Blend" />
-                        <div ng-show="item.type==0" class="md-list-item-text">
-                            <h3>{{item.fileName.substr(0,10)}}</h3>
-                        </div>
-                        <span ng-show="item.type==1">Transition</span>
-                    </div>
-
-                    <!--------- Up, Down and Delete buttons---------------->
-
-                    <div flex="30" layout="row" layout-align="none" ng-show="item.type==0">
-                        <div>
-                            <md-button ng-click="moveUpItem($index)" class="md-icon-button md-accent md-hue-2" aria-label="Generate" ng-disabled="$first">
-                                <i class="material-icons">keyboard_arrow_up</i>
-                            </md-button>
-                            <md-button ng-click="moveDownItem($index)" class="md-icon-button md-accent md-hue-2" aria-label="Generate" ng-disabled="$last">
-                                <i class="material-icons">keyboard_arrow_down</i>
-                            </md-button>
-                        </div>
-                        <div layout="row" layout-align="center center">
-                            <md-button ng-click="removeItem($index)" class="md-icon-button md-warn md-hue-1" aria-label="Generate">
-                                <i class="material-icons">delete</i>
-                                <md-tooltip md-direction="right">Remove slide</md-tooltip>
-                            </md-button>
-                        </div>
-                    </div>
-                </md-list-item>
-                <md-divider></md-divider>
+    <!--    studio-->
+    <div layout="row" flex>
+        <div layout="column" flex="15" layout-margin>
+            <md-subheader class="md-primary"><i>Sentences Repository</i></md-subheader>
+            <div ng-repeat="sen in sentencesRepo" layout="row" layout-align="start center" style="text-overflow: ellipsis;overflow: hidden;cursor: default;
+            border-radius: 16px;
+            display: block;
+            height: 32px;
+            line-height: 32px;
+            margin: 8px 8px 0 0;
+            padding: 0 12px;
+            float: left;
+            box-sizing: border-box;
+            max-width: 100%;
+            position: relative;
+            padding-right: 22px;
+            background: rgb(224,224,224);
+            color: rgb(66,66,66);
+            font-family: Roboto,Helvetica Neue,sans-serif;
+            font-size: 16px;
+           -webkit-box-direction: normal;
+            white-space: nowrap;cursor: move"  ng-drag="true" ng-drag-data="sen" data-allow-transform="true"><span>{{sen}}</span>
             </div>
-        </md-list>
-    </md-sidenav>
+        </div>
 
-    <!-- Our unnamed main ui-view for slides details -->
-    <md-content flex ui-view class="slide md-whiteframe-4dp" layout="column"></md-content>
+        <div layout="row" flex>
+            <md-sidenav flex="25" md-is-locked-open="true" class="md-whiteframe-4dp slide" flex>
+                <md-list flex>
+                    <!----------------Slides in the side List ----------------->
+
+                    <div ng-repeat="item in slides" class="repeated-item" ng-drop="item.type==0" ng-drop-success="onDropComplete($data,$event)">
+                        <md-list-item ng-click="goToSlideDetails($index, item.type)" layout="row" ng-class="{'selectedIndex': selectedIndex==$index, 'md-2-line': item.type == 0, 'md-offset': item.type == 1}">
+                            <div flex="70" layout="row">
+                                <img ng-show="item.type==0" ng-src={{item.thumbnail}} class="md-avatar" alt="Blend" />
+                                <div ng-show="item.type==0" class="md-list-item-text">
+                                    <h3>{{item.fileName.substr(0,10)}}</h3>
+                                </div>
+                                <span ng-show="item.type==1">Transition</span>
+                            </div>
+
+                            <!--------- Up, Down and Delete buttons---------------->
+
+                            <div flex="30" layout="row" layout-align="none" ng-show="item.type==0">
+                                <div>
+                                    <md-button ng-click="moveUpItem($index)" class="md-icon-button md-accent md-hue-2" aria-label="Generate" ng-disabled="$first">
+                                        <i class="material-icons">keyboard_arrow_up</i>
+                                    </md-button>
+                                    <md-button ng-click="moveDownItem($index)" class="md-icon-button md-accent md-hue-2" aria-label="Generate" ng-disabled="$last">
+                                        <i class="material-icons">keyboard_arrow_down</i>
+                                    </md-button>
+                                </div>
+                                <div layout="row" layout-align="center center">
+                                    <md-button ng-click="removeItem($index)" class="md-icon-button md-warn md-hue-1" aria-label="Generate">
+                                        <i class="material-icons">delete</i>
+                                        <md-tooltip md-direction="right">Remove slide</md-tooltip>
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-list-item>
+                        <md-divider></md-divider>
+                    </div>
+                </md-list>
+            </md-sidenav>
+            <div layout="column" flex>
+                <!-- Our unnamed main ui-view for slides details -->
+                <md-content flex ui-view class="slide md-whiteframe-4dp" layout="column"></md-content>
+            </div>
+        </div>
+    </div>
 </div>

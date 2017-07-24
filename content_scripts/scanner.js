@@ -1,6 +1,16 @@
 var pickedElementsList = [];
 //var messagingPort;
 
+function textElement(innerHTML) {
+    this.type=0;
+    this.innerHTML = innerHTML;
+}
+
+function imageElement(src) {
+    this.type=1;
+    this.src = src;
+}
+
 /*
 send message to the panel. 
 type = type of message. 0 = element add/remove
@@ -8,11 +18,18 @@ element  = the element
 option (int) = 0-Add, 1-Remove
 */
 function sendMessageToPanel(type, element, option) {
-    browser.runtime.sendMessage({
+//    browser.runtime.sendMessage({
+//        type: type,
+//        element: {
+//            tagName: element.tagName,
+//            innerHTML: element.innerHTML || null,
+//            src: element.src || null
+//        },
+//        option: option
+//    });
+        browser.runtime.sendMessage({
         type: type,
-        element: {tagName: element.tagName,
-                 innerHTML: element.innerHTML || null,
-                 src: element.src || null},
+        element: element,
         option: option
     });
 
@@ -20,10 +37,16 @@ function sendMessageToPanel(type, element, option) {
 
 function clickListener(e) {
 
-
+    let ele = e.target;
+    let element;
+    if (ele.tagName.toLowerCase() === "img")
+        element = new imageElement(ele.src);
+    else
+        element = new textElement(ele.innerHTML);
     
-    var ele = e.target;
-    var index = pickedElementsList.indexOf(ele);
+    var index  = pickedElementsList.findIndex((ele) => {
+            return e.target.tagName == 'IMG' ? ele.src == e.target.src : ele.innerHTML == e.target.innerHTML;
+        }) 
 
     if (index == -1) {
 
@@ -31,13 +54,14 @@ function clickListener(e) {
             ele.style.border = "5px solid blue";
         } else
             ele.style.border = "5px solid pink";
-        pickedElementsList.push(ele);
-        sendMessageToPanel(0, ele, 0);
+
+        pickedElementsList.push(element);
+        sendMessageToPanel(0, element, 0);
 
     } else {
         ele.style.border = "";
         pickedElementsList.splice(index, 1);
-        sendMessageToPanel(0, ele, 1);
+        sendMessageToPanel(0, element, 1);
     }
 
     e.preventDefault();
@@ -47,7 +71,15 @@ function clickListener(e) {
 
 function mouseoverListener(e) {
 
-    if (pickedElementsList.indexOf(e.target) == -1) {
+//    let element;
+//    if (e.target.tagName.toLowerCase() === "img")
+//        element = new imageElement(e.target.src);
+//    else
+//        element = new textElement(e.target.innerHTML);
+
+    if (pickedElementsList.findIndex((ele) => {
+            return e.target.tagName == 'IMG' ? ele.src == e.target.src : ele.innerHTML == e.target.innerHTML;
+        }) === -1) {
         if (e.target.tagName.toLowerCase() === "img")
             e.target.style.border = "5px dotted blue";
         else
@@ -56,7 +88,10 @@ function mouseoverListener(e) {
 }
 
 function mouseoutListener(e) {
-    if (pickedElementsList.indexOf(e.target) == -1)
+
+    if (pickedElementsList.findIndex((ele) => {
+            return e.target.tagName == 'IMG' ? ele.src == e.target.src : ele.innerHTML == e.target.innerHTML;
+        }) === -1)
         e.target.style.border = "";
 }
 

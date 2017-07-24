@@ -11,7 +11,6 @@
     <link href="css/styles.css" rel="stylesheet">
     <link href="css/icon.css" rel="stylesheet">
 
-    <script type="text/javascript" src="javascripts/panel.index.js"></script>
     <script type="text/javascript" src="lib/jquery-2.2.0.min.js"></script>
     <!-- Angular Material requires Angular.js Libraries -->
     <script type="text/javascript" src="lib/angular.min.js"></script>
@@ -21,10 +20,99 @@
 
     <script type="text/javascript" src="lib/angular-material.min.js"></script>
     <script type="text/javascript" src="javascripts/angular-ui-router.js"></script>
+    <script type="text/javascript" src="javascripts/ngDraggable.js"></script>
     <script type="text/javascript" src="javascripts/app.js"></script>
     <script type="text/javascript" src="lib/lodash.min.js"></script>
     <script type="text/javascript" src="lib/socket.io.slim.js"></script>
+    <style>
+        * {
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+        
+        [ng-drag] {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        [ng-drag] {
+/*
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 0, 0, 0.5);
+            color: white;
+            text-align: center;
+            padding-top: 40px;
+            display: inline-block;
+            margin: 0 10px;
+*/
+            cursor: pointer;
+        }
+        
+        ul.draggable-objects:after {
+            display: block;
+            content: "";
+            clear: both;
+        }
+        
+        .draggable-objects li {
+            float: left;
+            display: block;
+            width: 120px;
+            height: 100px;
+        }
+        
+        [ng-drag].drag-over {
+            border: solid 30px red;
+        }
+        
+        [ng-drag].dragging {
+            opacity: 0.5;
+            border: solid 1px blue;
+        }
+        
+/*
+        [ng-drop] {
+            background: rgba(0, 255, 0, 0.5);
+            text-align: center;
+            width: 600px;
+            height: 200px;
+            padding-top: 90px;
+            display: block;
+            margin: 20px auto;
+            position: relative;
+        }
+*/
+        
+        [ng-drop].drag-enter {
+            border: solid 3px black;
+        }
+        
+/*
+        [ng-drop] span.title {
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 20px;
+            margin-left: -100px;
+            margin-top: -10px;
+        }
+*/
+        
+/*
+        [ng-drop] div {
+            position: relative;
+            z-index: 2;
+        }
+*/
 
+    </style>
 </head>
 
 <body layout="column" ng-app="videoAutomation">
@@ -43,8 +131,10 @@
             <div style="margin-left:15px" flex layout="row" layout-align="start end">
                 <small><i>v 0.4.2</i></small>
             </div>
+            <!--
             <button id="start_spy">Start Spy</button>
             <button id="stop_spy">Stop Spy</button>
+			-->
             <md-button aria-label="Notifications" class="md-icon-button" ng-ng-click="test()">
                 <i class="material-icons">notifications</i>
                 <md-tooltip>Notifications</md-tooltip>
@@ -62,33 +152,3 @@
 </body>
 
 </html>
-
-<!--
-<html>
-
-<head>
-
-</head>
-
-<body>
-    <h1 id="headline">The Panel</h1>
-    <h2 id="h2">Debug</h2>
-
-    <button id="start_spy">Start Spy</button>
-    <button id="stop_spy">Stop Spy</button>
-    <button id="import_elements_from_spy">Import elements from spy</button>
-    <br>
-    <br>
-    
-    <table id="myTable">
-        <tr>
-            <th>tag name</th>
-            <th>inner html</th>
-        </tr>
-    </table>
-    <br>
-    <script src="panel.index.js"></script>
-</body>
-
-</html>
--->

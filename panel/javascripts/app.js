@@ -1,6 +1,6 @@
 console.log("app.js loaded");
 
-var myApp = angular.module('videoAutomation', ['ngMaterial', 'ui.router', 'ngAnimate'])
+var myApp = angular.module('videoAutomation', ['ngMaterial', 'ui.router', 'ngAnimate', 'ngDraggable'])
 
 .run(
   ['$rootScope', '$state', '$stateParams',
@@ -166,7 +166,6 @@ myApp.controller('toolBarCtrl', ['$rootScope', '$scope', '$mdSidenav', function 
     $scope.toggleRight = buildToggler('right');
 
     function buildToggler(componentId) {
-
         return function () {
             $mdSidenav(componentId).toggle();
         };
@@ -174,53 +173,6 @@ myApp.controller('toolBarCtrl', ['$rootScope', '$scope', '$mdSidenav', function 
 
 }]);
 
-myApp.controller('mainNavCtrl', ['$scope', '$state', 'videoService', function ($scope, $state, videoService) {
-
-    $scope.showTabNav = true;
-
-    $scope.currentNavItem = 'Home';
-
-    $scope.$on('videosHistoryCtrl.takeToStudio', function (event, args) {
-        $scope._goto(args.state);
-    });
-
-    $scope.$on('goToStudio', function (event, args) {
-        $scope.showTabNav = true;
-        $scope._goto('manual.instructions');
-    });
-
-    $scope.$on('goToAutomatic', function (event, args) {
-        $scope.showTabNav = true;
-        $scope._goto('automatic');
-    });
-
-    $scope.$on('goToHome', function (event, args) {
-        $scope.showTabNav = true;
-        $scope._goto('home');
-    });
-
-    $scope.$on('hideTabs', function (event, args) {
-        $scope.showTabNav = false;
-    });
-
-    $scope._goto = function (state) {
-
-        switch (state) {
-            case 'automatic':
-                $scope.currentNavItem = 'Automatic';
-                break;
-            case 'manual.instructions':
-                $scope.currentNavItem = 'Manual';
-                break;
-            case 'home':
-                $scope.currentNavItem = 'Home';
-                break;
-        }
-        //$scope.currentNavItem = state === 'automatic' ? 'Automatic' : 'Manual';
-        $state.go(state);
-    }
-
-}]);
 
 myApp.controller('customerVideosManagerCtrl', ['$scope', '$rootScope', '$state', '$mdDialog', 'videoService', function ($scope, $rootScope, $state, $mdDialog, videoService) {
 
@@ -330,69 +282,104 @@ myApp.controller('customerVideosManagerCtrl', ['$scope', '$rootScope', '$state',
 
 }]);
 
-myApp.controller('automaticCtrl', ['$scope', '$q', 'videoService', function ($scope, $q, videoService) {
-    //console.log(`automaticCtrl`);
+myApp.controller('imageDetailsController', ['$scope', '$state', '$stateParams', 'videoService', function ($scope, $state, $stateParams, videoService) {
 
-    $scope.searchText = '';
+    $scope.fontSizeList = [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72];
+    $scope.fontList = ['Arial', 'Calibri', 'Cambria', 'Comic Sans MS', 'Georgia', 'Open Sans', 'Times New Roman'];
 
-    // list of `state` value/display objects
-    $scope.phrases = loadAll();
+    $scope.item = videoService.getSlide($stateParams.id);
 
-    $scope.generateAutomaticVideo = function () {
+}])
 
-        //console.log(`automaticCtrl::genrateAutomaticVideo::search  = ${$scope.searchText}`);
+myApp.controller('transitionDetailsController', ['$scope', '$state', '$stateParams', 'videoService', function ($scope, $state, $stateParams, videoService) {
 
-        if ($scope.searchText) videoService.generateAutomaticVideo($scope.searchText);
-        $scope.searchText = '';
+    $scope.item = videoService.getSlide($stateParams.id);
 
-    }
-
-    $scope.querySearch = function (query) {
-        var results = query ? $scope.phrases.filter(createFilterFor(query)) : $scope.phrases;
-        //console.log('-----------results are:' + results);
-        return results.slice(0, 3);
-    }
-
-    $scope.searchTextChange = function (text) {
-        //console.log('Text changed to ' + text);
-    }
-
-    function loadAll() {
-        var allOptionalPhrases =
-            'BMW, Audi, Porsche, Lamborghini, Dodge, McLaren, Mercedes-Benz, Bentley, Nissan, Chevrolet, BMW 7 Series, BMW M4, Audi TTS, Audi A8,   Porsche 918 Spyder, Lamborghini Aventador, Dodge Challenger, Dodge Charger, McLaren 650S Coupe, McLaren 650S Spider, Mercedes-Benz S-Class, Mercedes-Benz SL-Class, Bentley Flying Spur, Lamborghini Huracan, Nissan GT-R, Chevrolet Camaro, Porsche Panamera, BMW 7 Series 2016, BMW 7 Series 2017, BMW M4 2017, Audi TTS 2017, Audi A8 2017, Porsche 918 Spyder 2016, Lamborghini Aventador 2017, Dodge Challenger 2016, Dodge Charger 2016, McLaren 650S Coupe 2016, McLaren 650S Spider 2017, Mercedes-Benz S-Class 2016, Mercedes-Benz SL-Class 2016, Bentley Flying Spur 2017, Lamborghini Huracan 2017,Nissan	GT-R 2016, Chevrolet Camaro 2017, Porsche Panamera 2017, Porsche Panamera 2016';
-
-
-        return allOptionalPhrases.split(/, +/g).map(function (phrase_option) {
-            return {
-                value: phrase_option.toLowerCase(),
-                display: phrase_option
-            };
-        });
-
-    }
-
-    /**
-     * Create filter function for a query string
-     */
-    function createFilterFor(query) {
-        var lowercaseQuery = angular.lowercase(query);
-
-        return function filterFn(state) {
-            return (state.value.indexOf(lowercaseQuery) === 0);
-        };
-
-    }
-
-}]);
+    $scope.id = $stateParams.id / 2 + 1 / 2;
+}])
 
 
 myApp.controller('manualCtrl', ['$scope', '$state', '$timeout', '$mdDialog', 'videoService', function ($scope, $state, $timeout, $mdDialog, videoService) {
+
+    $scope.onDropComplete = function (data, evt) {
+        //window.alert(this.$index)
+        $scope.sentencesRepo.splice($scope.sentencesRepo.indexOf(data), 1);
+        $scope.slides[this.$index].caption.text = data;
+    }
+
+    $scope.sentencesRepo = [];
+
+    function handleMessage(request, sender, sendResponse) {
+        switch (request.type) {
+            case 0:
+                if (request.option === 0) {
+                    //add element
+                    if (request.element.type === 1) {
+                        //img
+                        videoService.addSlideFromScannerImg(request.element);
+                    } else {
+                        $scope.$apply(function () {
+                            $scope.sentencesRepo.push(request.element.innerHTML);
+                        });
+                    }
+                } else {
+                    //remove element
+                    if (request.element.type === 1) {} else {
+                        $scope.$apply(function () {
+                            $scope.sentencesRepo.splice($scope.sentencesRepo.indexOf(request.element.innerHTML), 1);
+                        });
+                    }
+                }
+                break;
+        } //end of switch
+    }
+
+    browser.runtime.onMessage.addListener(handleMessage);
+    $scope.spy_enabled = false;
+
+
+    $scope.myVar = "md-icon-button md-accent md-hue-3";
+    $scope.toggle_spy =
+        function () {
+            if (!$scope.spy_enabled) {
+                browser.tabs.query({
+                    currentWindow: false,
+                    active: true
+                }).then((tabs) => {
+                    browser.tabs.sendMessage(
+                        tabs[0].id, {
+                            id: 0,
+                            name: "start_spy"
+                        }
+                    ).then(() => {
+                        $scope.spy_enabled = !$scope.spy_enabled;
+                        $scope.myVar = "md-icon-button md-accent";
+                    }).catch();
+                })
+            } else {
+                browser.tabs.query({
+                    currentWindow: false,
+                    active: true
+                }).then((tabs) => {
+                    browser.tabs.sendMessage(
+                        tabs[0].id, {
+                            id: 1,
+                            name: "stop_spy"
+                        }
+                    ).then(() => {
+                        $scope.spy_enabled = !$scope.spy_enabled;
+                        $scope.myVar = "md-icon-button md-accent md-hue-3";
+                    }).catch();
+                })
+            }
+        }
 
     $scope.selectedIndex = null;
 
     $scope.video = videoService.manualVideo;
 
     var uploadClicks = 0;
+
     $scope.slides = videoService.getSlides();
 
 
@@ -413,6 +400,7 @@ myApp.controller('manualCtrl', ['$scope', '$state', '$timeout', '$mdDialog', 'vi
     }
 
     $scope.clearList = function () {
+        $scope.sentencesRepo = [];
         videoService.clearSlidesList();
         console.log($scope.slides);
         $scope.slides = [];
@@ -488,10 +476,6 @@ myApp.controller('manualCtrl', ['$scope', '$state', '$timeout', '$mdDialog', 'vi
         $scope.slides[origin] = temp;
     }
 
-    $scope.genrateVideo = function () {
-        videoService.generateVideo();
-    }
-
     $scope.showConfirmGenerateVideo = function (ev) {
         // Appending dialog to document.body to cover sidenav in docs app
         var confirm = $mdDialog.confirm()
@@ -510,23 +494,6 @@ myApp.controller('manualCtrl', ['$scope', '$state', '$timeout', '$mdDialog', 'vi
     };
 
 }]);
-
-myApp.controller('imageDetailsController', ['$scope', '$state', '$stateParams', 'videoService', function ($scope, $state, $stateParams, videoService) {
-
-    $scope.fontSizeList = [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72];
-    $scope.fontList = ['Arial', 'Calibri', 'Cambria', 'Comic Sans MS', 'Georgia', 'Open Sans', 'Times New Roman'];
-
-    $scope.item = videoService.getSlide($stateParams.id);
-
-}])
-
-myApp.controller('transitionDetailsController', ['$scope', '$state', '$stateParams', 'videoService', function ($scope, $state, $stateParams, videoService) {
-
-    $scope.item = videoService.getSlide($stateParams.id);
-
-    $scope.id = $stateParams.id / 2 + 1 / 2;
-}])
-
 
 
 myApp.factory('videoService', ['$rootScope', '$state', function ($rootScope, $state) {
@@ -597,6 +564,49 @@ myApp.factory('videoService', ['$rootScope', '$state', function ($rootScope, $st
 
     var clearSlidesList = function () {
         video.slides = [];
+    }
+
+    var addSlideFromScannerImg = function (imgElement) {
+        $rootScope.$apply(() => {
+
+            if (video.slides.length != 0)
+                video.slides.push({
+                    type: 1, // 1 for Blend
+                    fileName: 'Transition',
+                    thumbnail: 'images/transition.jpg',
+                    duration: 2,
+                    effect: {
+                        //0 - blend, 1 - uncover
+                        type: 0,
+                        uncover: null //0-left, 1-right, 2-down
+                    }
+                });
+
+            video.slides.push({
+                type: 0, // 0 for image
+                fileName: null,
+                //                        file: files[index],
+                caption: {
+                    text: null,
+                    font: "Arial",
+                    fontsize: 11,
+                    bold: false,
+                    italic: false,
+                    effect: 0, // 0 - None, 1 - Sliding Right, 2 - FadeInOit
+                    startTime: 0,
+                    duration: 0
+                },
+                tts: {
+                    enable: false
+                },
+                thumbnail: imgElement.src,
+                zoom: {
+                    enabled: true,
+                    style: 1 // 0-zoom to center. 1-zoom to random place near center
+                },
+                duration: 10
+            })
+        })
     }
 
     var readAndPreview = function (file, index) {
@@ -831,7 +841,8 @@ myApp.factory('videoService', ['$rootScope', '$state', function ($rootScope, $st
         getVideoHistoryList: getVideoHistoryList,
         getLink: getLink,
         getVideoByIndex: getVideoByIndex,
-        loadVideoDetailsToStudio: loadVideoDetailsToStudio
+        loadVideoDetailsToStudio: loadVideoDetailsToStudio,
+        addSlideFromScannerImg: addSlideFromScannerImg
     };
             }])
 
