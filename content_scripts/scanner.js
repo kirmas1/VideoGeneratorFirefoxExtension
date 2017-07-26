@@ -53,7 +53,7 @@ function clickListener(e) {
         if (ele.tagName.toLowerCase() === "img") {
             ele.style.border = "5px solid blue";
         } else
-            ele.style.border = "5px solid pink";
+            ele.style.border = "5px solid red";
 
         pickedElementsList.push(element);
         sendMessageToPanel(0, element, 0);
@@ -83,7 +83,7 @@ function mouseoverListener(e) {
         if (e.target.tagName.toLowerCase() === "img")
             e.target.style.border = "5px dotted blue";
         else
-            e.target.style.border = "5px dotted pink";
+            e.target.style.border = "5px dotted red";
     }
 }
 

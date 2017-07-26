@@ -301,46 +301,20 @@ myApp.controller('transitionDetailsController', ['$scope', '$state', '$statePara
 
 myApp.controller('manualCtrl', ['$scope', '$state', '$timeout', '$mdDialog', 'videoService', function ($scope, $state, $timeout, $mdDialog, videoService) {
 
-    $scope.onDropComplete = function (data, evt) {
-        //window.alert(this.$index)
-        $scope.sentencesRepo.splice($scope.sentencesRepo.indexOf(data), 1);
-        $scope.slides[this.$index].caption.text = data;
-    }
-
     $scope.sentencesRepo = [];
 
-    function handleMessage(request, sender, sendResponse) {
-        switch (request.type) {
-            case 0:
-                if (request.option === 0) {
-                    //add element
-                    if (request.element.type === 1) {
-                        //img
-                        videoService.addSlideFromScannerImg(request.element);
-                    } else {
-                        $scope.$apply(function () {
-                            $scope.sentencesRepo.push(request.element.innerHTML);
-                        });
-                    }
-                } else {
-                    //remove element
-                    if (request.element.type === 1) {} else {
-                        $scope.$apply(function () {
-                            $scope.sentencesRepo.splice($scope.sentencesRepo.indexOf(request.element.innerHTML), 1);
-                        });
-                    }
-                }
-                break;
-        } //end of switch
-    }
-
-    browser.runtime.onMessage.addListener(handleMessage);
     $scope.spy_enabled = false;
 
-
+    //for the spy button
     $scope.myVar = "md-icon-button md-accent md-hue-3";
-    $scope.toggle_spy =
-        function () {
+
+    var uploadClicks = 0;
+    
+    $scope.removeSentenceFromRepo = function(index) {
+        $scope.sentencesRepo.splice(index, 1);
+    }
+    
+    $scope.toggle_spy = function () {
             if (!$scope.spy_enabled) {
                 browser.tabs.query({
                     currentWindow: false,
@@ -377,11 +351,14 @@ myApp.controller('manualCtrl', ['$scope', '$state', '$timeout', '$mdDialog', 'vi
     $scope.selectedIndex = null;
 
     $scope.video = videoService.manualVideo;
-
-    var uploadClicks = 0;
+    //$scope.slides = $scope.video.slides;
 
     $scope.slides = videoService.getSlides();
 
+    $scope.onDropComplete = function (data, evt) {
+        //$scope.sentencesRepo.splice($scope.sentencesRepo.indexOf(data), 1);
+        $scope.slides[this.$index].caption.text = data;
+    }
 
     $scope.$watch('selectedIndex', function (newValue, oldValue) {
         if (newValue != oldValue && newValue != null && oldValue == null) {
@@ -493,6 +470,53 @@ myApp.controller('manualCtrl', ['$scope', '$state', '$timeout', '$mdDialog', 'vi
         });
     };
 
+    var handleMessage = function (request, sender, sendResponse) {
+        switch (request.type) {
+            case 0:
+                if (request.option === 0) {
+                    //add element
+                    if (request.element.type === 1) {
+                        //img
+                        videoService.addSlideFromScannerImg(request.element);
+                        $scope.slides = videoService.getSlides();
+                        $scope.$digest();
+                    } else {
+                        $scope.$apply(function () {
+                            $scope.sentencesRepo.push(request.element.innerHTML);
+                        });
+                    }
+                } else {
+                    //remove element
+                    if (request.element.type === 1) {
+                        //TODO
+
+                    } else {
+                        $scope.$apply(function () {
+                            $scope.sentencesRepo.splice($scope.sentencesRepo.indexOf(request.element.innerHTML), 1);
+                        });
+                    }
+                }
+                break;
+        } //end of switch
+    }
+    
+    $scope.shuffle = function() {
+        let counter = 0;
+        $scope.sentencesRepo.forEach((sentence, index)=>{
+            for (let i=0; i<$scope.slides.length/2; i++) {
+                if ($scope.slides[i*2].caption.text === null) {
+                    $scope.slides[i*2].caption.text = sentence;
+                    counter++;
+                    break;
+                }
+            }
+        })
+        //$scope.sentencesRepo.splice(0, counter);
+        
+    }
+
+    browser.runtime.onMessage.addListener(handleMessage);
+
 }]);
 
 
@@ -588,7 +612,7 @@ myApp.factory('videoService', ['$rootScope', '$state', function ($rootScope, $st
                 //                        file: files[index],
                 caption: {
                     text: null,
-                    font: "Arial",
+                    font: "Calibri",
                     fontsize: 11,
                     bold: false,
                     italic: false,
@@ -626,7 +650,7 @@ myApp.factory('videoService', ['$rootScope', '$state', function ($rootScope, $st
                         //                        file: files[index],
                         caption: {
                             text: null,
-                            font: "Arial",
+                            font: "Calibri",
                             fontsize: 11,
                             bold: false,
                             italic: false,
