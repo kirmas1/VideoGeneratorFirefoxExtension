@@ -23,8 +23,11 @@
     <script type="text/javascript" src="javascripts/ngDraggable.js"></script>
     <script type="text/javascript" src="javascripts/app.js"></script>
     <script type="text/javascript" src="lib/lodash.min.js"></script>
-    <script type="text/javascript" src="lib/socket.io.slim.js"></script>
     <style>
+        .bordered {
+            border:1px solid rgba(0,0,0,.1)
+        }
+        
         * {
             -moz-box-sizing: border-box;
             -webkit-box-sizing: border-box;
@@ -40,7 +43,7 @@
         }
         
         [ng-drag] {
-/*
+            /*
             width: 100px;
             height: 100px;
             background: rgba(255, 0, 0, 0.5);
@@ -74,8 +77,7 @@
             opacity: 0.5;
             border: solid 1px blue;
         }
-        
-/*
+        /*
         [ng-drop] {
             background: rgba(0, 255, 0, 0.5);
             text-align: center;
@@ -91,8 +93,7 @@
         [ng-drop].drag-enter {
             border: solid 3px black;
         }
-        
-/*
+        /*
         [ng-drop] span.title {
             display: block;
             position: absolute;
@@ -104,8 +105,7 @@
             margin-top: -10px;
         }
 */
-        
-/*
+        /*
         [ng-drop] div {
             position: relative;
             z-index: 2;
@@ -115,39 +115,88 @@
     </style>
 </head>
 
-<body layout="column" ng-app="videoAutomation">
+<body layout="row" ng-app="videoAutomation">
+<!--test-->
 
-    <md-toolbar ng-controller="toolBarCtrl">
-        <div class="md-toolbar-tools">
-            <md-button aria-label="Open menu with custom trigger" class="md-icon-button" ng-click="toggleLeft()">
-                <i class="material-icons">menu</i>
-                <md-tooltip>Menu</md-tooltip>
-            </md-button>
+<!--
+  <form action="http://test-kirma.s3.amazonaws.com/" method="post" enctype="multipart/form-data">
+   
+    Key to upload: <input type="input" name="key" value="user/${filename}" /><br />
+    Content-Type: <input type="input" name="Content-Type" value="image/jpeg" /><br />
+    File: <input type="file" name="file" /> <br />
+     The elements after this will be ignored 
+    <input type="submit" name="submit" value="Upload to Amazon S3" />
+  </form>
+-->
 
-            <div layout="row">
-                <h2 id="icon" ng-click="goToHome()"><i>Article On Rails</i></h2>
-            </div>
-            <div style="margin-left:15px" flex layout="row" layout-align="start end">
-                <small><i>v 0.4.2</i></small>
-            </div>
-            <!--
+
+<!--   Till here-->
+    <md-sidenav class="md-sidenav-left" md-component-id="left" md-whiteframe="4">
+        <md-content ng-controller="sideNavCtrl">
+            <md-toolbar class="md-theme-indigo">
+                <div class="md-toolbar-tools">
+                    <md-button aria-label="Open menu with custom trigger" class="md-icon-button" ng-click="closeSideNav()">
+                        <i class="material-icons">menu</i>
+                    </md-button>
+                    <h2><i>Article On Rails</i></h2>
+                </div>
+            </md-toolbar>
+            <md-list>
+                <md-list-item ng-click="goToStudio()">
+                    STUDIO
+                </md-list-item>
+                <md-divider></md-divider>
+                <md-list-item ng-click="goToMyVideos()">
+                    VIDEOS
+                </md-list-item>
+                <md-divider></md-divider>
+                <md-list-item ng-click="null">
+                    SETTINGS
+                </md-list-item>
+                <md-divider></md-divider>
+                <md-list-item ng-click="null">
+                    HELP
+                </md-list-item>
+                <md-divider></md-divider>
+                <md-list-item ng-click="null">
+                    ABOUT
+                </md-list-item>
+            </md-list>
+        </md-content>
+    </md-sidenav>
+
+    <div flex layout="column">
+        <md-toolbar ng-controller="toolBarCtrl">
+            <div class="md-toolbar-tools">
+                <md-button aria-label="Open menu with custom trigger" class="md-icon-button" ng-click="toggleLeft()">
+                    <i class="material-icons">menu</i>
+                    <md-tooltip>Menu</md-tooltip>
+                </md-button>
+
+                <div layout="row">
+                    <h2 id="icon" ng-click="goToHome()"><i>Article On Rails</i></h2>
+                </div>
+                <div style="margin-left:15px" flex layout="row" layout-align="start end">
+                    <small><i>v 0.4.2</i></small>
+                </div>
+                <!--
             <button id="start_spy">Start Spy</button>
             <button id="stop_spy">Stop Spy</button>
 			-->
-            <md-button aria-label="Notifications" class="md-icon-button" ng-ng-click="test()">
-                <i class="material-icons">notifications</i>
-                <md-tooltip>Notifications</md-tooltip>
-            </md-button>
+                <md-button aria-label="Notifications" class="md-icon-button" ng-ng-click="test()">
+                    <i class="material-icons">notifications</i>
+                    <md-tooltip>Notifications</md-tooltip>
+                </md-button>
 
-            <md-button aria-label="Account" class="md-icon-button">
-                <i class="material-icons">account_circle</i>
-                <md-tooltip>Account</md-tooltip>
-            </md-button>
-        </div>
-    </md-toolbar>
-    <md-content layout="column" flex ui-view class="slide">
-    </md-content>
-
+                <md-button aria-label="Account" class="md-icon-button">
+                    <i class="material-icons">account_circle</i>
+                    <md-tooltip>Account</md-tooltip>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-content layout="column" flex ui-view class="slide">
+        </md-content>
+    </div>
 </body>
 
 </html>

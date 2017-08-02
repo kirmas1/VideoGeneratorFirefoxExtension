@@ -65,71 +65,7 @@ var myApp = angular.module('videoAutomation', ['ngMaterial', 'ui.router', 'ngAni
                 templateUrl: '/panel/pages/customerVideosManager.html',
                 controller: 'customerVideosManagerCtrl'
             })
-            .state('home', {
-                url: '/dashboard',
-                templateUrl: '/panel/pages/dashboard.html',
-                controller: 'dashboardManagerCtrl'
-            })
   }]);
-
-myApp.controller('dashboardManagerCtrl', ['$scope', '$rootScope', '$state', '$mdSidenav', function ($scope, $rootScope, $state, $mdSidenav) {
-
-    // Load the Visualization API and the corechart package.
-    google.charts.load('current', {
-        'packages': ['corechart', 'gauge']
-    });
-
-    // Set a callback to run when the Google Visualization API is loaded.
-    google.charts.setOnLoadCallback(drawChart);
-
-    // Callback that creates and populates a data table,
-    // instantiates the pie chart, passes in the data and
-    // draws it.
-    function drawChart() {
-
-        // Create the data table.
-        var PieChartData = new google.visualization.DataTable();
-        PieChartData.addColumn('string', 'Source');
-        PieChartData.addColumn('number', 'Videos');
-        PieChartData.addRows([
-          ['From URL', 378],
-          ['Phrase', 144],
-          ['Studio', 52]
-        ]);
-
-        // Set chart options
-        var PieChartOptions = {
-            'title': 'Videos Source'
-                //            'width': 400,
-                //            'height': 300
-        };
-
-
-        var LineChartData = google.visualization.arrayToDataTable([
-          ['Month', 'URL', 'Phrase', 'Studio'],
-            ['March', 1000, 400, 32],
-          ['April', 1170, 460, 38],
-          ['May', 660, 1120, 55],
-          ['June', 1030, 540, 53]
-        ]);
-
-        var LineChartOptions = {
-            title: 'Video Production',
-            curveType: 'function',
-            legend: {
-                position: 'bottom'
-            }
-        };
-
-        var LineChart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-        LineChart.draw(LineChartData, LineChartOptions);
-
-        // Instantiate and draw our chart, passing in some options.
-        var PieChart = new google.visualization.PieChart(document.getElementById('chart_div'));
-        PieChart.draw(PieChartData, PieChartOptions);
-    }
-
-}]);
 
 myApp.controller('sideNavCtrl', ['$scope', '$rootScope', '$state', '$mdSidenav', function ($scope, $rootScope, $state, $mdSidenav) {
 
@@ -137,31 +73,21 @@ myApp.controller('sideNavCtrl', ['$scope', '$rootScope', '$state', '$mdSidenav',
         $mdSidenav('left').close();
     }
 
-    $scope.goToTest = function () {
-        $rootScope.$broadcast('hideTabs');
-        $state.go('test');
-    }
     $scope.goToMyVideos = function () {
-        $rootScope.$broadcast('hideTabs');
+        $mdSidenav('left').close();
         $state.go('videos');
     }
-    $scope.goToAutomatic = function () {
-        $rootScope.$broadcast('goToAutomatic');
-    }
     $scope.goToStudio = function () {
-        $rootScope.$broadcast('goToStudio');
-    }
-    $scope.goToHome = function () {
-        $rootScope.$broadcast('goToHome');
+        $mdSidenav('left').close();
+        $state.go('manual.instructions');
     }
 
 }]);
 
 myApp.controller('toolBarCtrl', ['$rootScope', '$scope', '$mdSidenav', function ($rootScope, $scope, $mdSidenav) {
 
-    $scope.goToHome = function () {
-        $rootScope.$broadcast('goToHome');
-    }
+    //    $scope.goToHome = function () {
+    //    }
     $scope.toggleLeft = buildToggler('left');
     $scope.toggleRight = buildToggler('right');
 
@@ -309,44 +235,44 @@ myApp.controller('manualCtrl', ['$scope', '$state', '$timeout', '$mdDialog', 'vi
     $scope.myVar = "md-icon-button md-accent md-hue-3";
 
     var uploadClicks = 0;
-    
-    $scope.removeSentenceFromRepo = function(index) {
+
+    $scope.removeSentenceFromRepo = function (index) {
         $scope.sentencesRepo.splice(index, 1);
     }
-    
+
     $scope.toggle_spy = function () {
-            if (!$scope.spy_enabled) {
-                browser.tabs.query({
-                    currentWindow: false,
-                    active: true
-                }).then((tabs) => {
-                    browser.tabs.sendMessage(
-                        tabs[0].id, {
-                            id: 0,
-                            name: "start_spy"
-                        }
-                    ).then(() => {
-                        $scope.spy_enabled = !$scope.spy_enabled;
-                        $scope.myVar = "md-icon-button md-accent";
-                    }).catch();
-                })
-            } else {
-                browser.tabs.query({
-                    currentWindow: false,
-                    active: true
-                }).then((tabs) => {
-                    browser.tabs.sendMessage(
-                        tabs[0].id, {
-                            id: 1,
-                            name: "stop_spy"
-                        }
-                    ).then(() => {
-                        $scope.spy_enabled = !$scope.spy_enabled;
-                        $scope.myVar = "md-icon-button md-accent md-hue-3";
-                    }).catch();
-                })
-            }
+        if (!$scope.spy_enabled) {
+            browser.tabs.query({
+                currentWindow: false,
+                active: true
+            }).then((tabs) => {
+                browser.tabs.sendMessage(
+                    tabs[0].id, {
+                        id: 0,
+                        name: "start_spy"
+                    }
+                ).then(() => {
+                    $scope.spy_enabled = !$scope.spy_enabled;
+                    $scope.myVar = "md-icon-button md-accent";
+                }).catch();
+            })
+        } else {
+            browser.tabs.query({
+                currentWindow: false,
+                active: true
+            }).then((tabs) => {
+                browser.tabs.sendMessage(
+                    tabs[0].id, {
+                        id: 1,
+                        name: "stop_spy"
+                    }
+                ).then(() => {
+                    $scope.spy_enabled = !$scope.spy_enabled;
+                    $scope.myVar = "md-icon-button md-accent md-hue-3";
+                }).catch();
+            })
         }
+    }
 
     $scope.selectedIndex = null;
 
@@ -354,6 +280,15 @@ myApp.controller('manualCtrl', ['$scope', '$state', '$timeout', '$mdDialog', 'vi
     //$scope.slides = $scope.video.slides;
 
     $scope.slides = videoService.getSlides();
+
+    $scope.setAudio = function (index, style) {
+        $scope.video.audio = style + (Number(index) + 1);
+    }
+
+    $scope.openMenu = function ($mdMenu, ev) {
+        originatorEv = ev;
+        $mdMenu.open(ev);
+    };
 
     $scope.onDropComplete = function (data, evt) {
         //$scope.sentencesRepo.splice($scope.sentencesRepo.indexOf(data), 1);
@@ -464,7 +399,7 @@ myApp.controller('manualCtrl', ['$scope', '$state', '$timeout', '$mdDialog', 'vi
             .cancel('Let me check again');
 
         $mdDialog.show(confirm).then(function () {
-            videoService.generateVideo();
+            videoService.generateVideo2();
         }, function () {
             //dismiss
         });
@@ -499,20 +434,20 @@ myApp.controller('manualCtrl', ['$scope', '$state', '$timeout', '$mdDialog', 'vi
                 break;
         } //end of switch
     }
-    
-    $scope.shuffle = function() {
+
+    $scope.shuffle = function () {
         let counter = 0;
-        $scope.sentencesRepo.forEach((sentence, index)=>{
-            for (let i=0; i<$scope.slides.length/2; i++) {
-                if ($scope.slides[i*2].caption.text === null) {
-                    $scope.slides[i*2].caption.text = sentence;
-                    counter++;
-                    break;
+        $scope.sentencesRepo.forEach((sentence, index) => {
+                for (let i = 0; i < $scope.slides.length / 2; i++) {
+                    if ($scope.slides[i * 2].caption.text === null) {
+                        $scope.slides[i * 2].caption.text = sentence;
+                        counter++;
+                        break;
+                    }
                 }
-            }
-        })
-        //$scope.sentencesRepo.splice(0, counter);
-        
+            })
+            //$scope.sentencesRepo.splice(0, counter);
+
     }
 
     browser.runtime.onMessage.addListener(handleMessage);
@@ -520,32 +455,15 @@ myApp.controller('manualCtrl', ['$scope', '$state', '$timeout', '$mdDialog', 'vi
 }]);
 
 
-myApp.factory('videoService', ['$rootScope', '$state', function ($rootScope, $state) {
+myApp.factory('videoService', ['$rootScope', '$state', '$http', function ($rootScope, $state, $http) {
 
     var updateVideoIndex = 0;
-    var socket = io.connect('http://localhost:3000');
-    //var socket = io.connect('http://ec2-35-162-54-141.us-west-2.compute.amazonaws.com:3000');
-
-    socket.on('connection approved', function (data) {
-        //console.log('connection approved ' + data);
-    });
-
-    socket.on('update', function (video) {
-        for (updateVideoIndex = 0; updateVideoIndex < historyList.length; updateVideoIndex++) {
-            if (historyList[updateVideoIndex].videoName === video.videoName &&
-                historyList[updateVideoIndex].clientName === video.clientName) {
-                historyList[updateVideoIndex] = video;
-                break;
-            }
-        }
-        $rootScope.$digest();
-    });
-
 
     var video = {
         files: [],
         name: null,
-        slides: [] //slides includes transitions
+        slides: [], //slides includes transitions
+        audio: "Jazz"
     };
 
     /*
@@ -596,7 +514,7 @@ myApp.factory('videoService', ['$rootScope', '$state', function ($rootScope, $st
             if (video.slides.length != 0)
                 video.slides.push({
                     type: 1, // 1 for Blend
-                    fileName: 'Transition',
+                    imageName: 'Transition',
                     thumbnail: 'images/transition.jpg',
                     duration: 2,
                     effect: {
@@ -608,8 +526,8 @@ myApp.factory('videoService', ['$rootScope', '$state', function ($rootScope, $st
 
             video.slides.push({
                 type: 0, // 0 for image
-                fileName: null,
-                //                        file: files[index],
+                imageName: 'scrapped_' + video.slides.length / 2,
+                imageURL: imgElement.src,
                 caption: {
                     text: null,
                     font: "Calibri",
@@ -638,7 +556,7 @@ myApp.factory('videoService', ['$rootScope', '$state', function ($rootScope, $st
         return new Promise((resolve, reject) => {
             // Make sure `file.name` matches our extensions criteria
             if (/\.(jpe?g|png|gif)$/i.test(file.name)) {
-                console.log('fileNmae is: ' + file.name);
+                console.log('fileName is: ' + file.name);
                 console.log('-------');
                 var reader = new FileReader();
 
@@ -646,8 +564,8 @@ myApp.factory('videoService', ['$rootScope', '$state', function ($rootScope, $st
                     //push Image objects
                     video.slides.push({
                         type: 0, // 0 for image
-                        fileName: file.name,
-                        //                        file: files[index],
+                        imageName: file.name,
+                        imageURL: null,
                         caption: {
                             text: null,
                             font: "Calibri",
@@ -696,7 +614,7 @@ myApp.factory('videoService', ['$rootScope', '$state', function ($rootScope, $st
                 //Push (splice) Transition objects
                 video.slides.splice(j + 1, 0, {
                     type: 1, // 1 for Blend
-                    fileName: 'Transition',
+                    imageName: 'Transition',
                     thumbnail: 'images/transition.jpg',
                     duration: 2,
                     effect: {
@@ -790,7 +708,7 @@ myApp.factory('videoService', ['$rootScope', '$state', function ($rootScope, $st
 
         for (let i = 0; i < video.slides.length; i++) {
             if (i % 2 == 0)
-                slidesClean.push(_.pick(video.slides[i], ['type', 'fileName', 'caption', 'zoom', 'duration', 'tts']));
+                slidesClean.push(_.pick(video.slides[i], ['type', 'imageName', 'imageURL', 'caption', 'zoom', 'duration', 'tts']));
             else
                 slidesClean.push(_.pick(video.slides[i], ['type', 'effect', 'duration']));
         }
@@ -854,6 +772,113 @@ myApp.factory('videoService', ['$rootScope', '$state', function ($rootScope, $st
 
     }
 
+    var generateVideo2 = function () {
+
+        var m_index = historyList.push({
+            videoName: video.name,
+            date: formatDate(new Date()),
+            link: '',
+            inProgress: true
+        }) - 1;
+
+        var slidesClean = [];
+
+        for (let i = 0; i < video.slides.length; i++) {
+            if (i % 2 == 0)
+                slidesClean.push(_.pick(video.slides[i], ['type', 'imageName', 'imageURL', 'caption', 'zoom', 'duration', 'tts']));
+            else
+                slidesClean.push(_.pick(video.slides[i], ['type', 'effect', 'duration']));
+        }
+
+        var dataToBackEnd = {
+            clientName: 'Sagi',
+            videoName: video.name,
+            info: {
+                origin: 0, // 0 - extension
+                length: 0,
+                timeCreated: formatDate(new Date()), //The request
+                link: null, //link to final video
+                state: -1, // -1 - Init, 0 - InProgress, 1 - Ready, 2 - Failed
+                err_msg: []
+            },
+            metadata: {
+                audio: video.audio,
+                slidesInfo: slidesClean
+            }
+        };
+
+        var pathOnS3 = dataToBackEnd.clientName + '/' + dataToBackEnd.videoName + '/';
+
+        var uploadAllFilesPromise = video.files.map((ele) => uploadFileToS3(pathOnS3, ele, ele.name));
+
+        Promise.all(uploadAllFilesPromise)
+            .then((result) => {
+                console.log('upload finsihed');
+                https:
+                    //http://localhost:3000/test
+                    $http.post('https://9108oktm8k.execute-api.us-west-2.amazonaws.com/prod', dataToBackEnd)
+                    .then((result) => {
+                        console.log('localResponse is: ' + result);
+                        $state.go('videos');
+                    })
+
+            })
+            .catch((err) => {
+                window.alert('err: ' + err);
+            })
+
+        /*
+                var formData = new FormData();
+                for (let i = 0; i < video.files.length; i++)
+                    formData.append('images', video.files[i], video.files[i].name);
+
+
+                formData.append('info', JSON.stringify(dataToBackEnd));
+                var xhr = new XMLHttpRequest();
+
+                xhr.onreadystatechange = function () {
+
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        historyList[m_index].link = xhr.responseText;
+                        historyList[m_index].inProgress = false;
+                        $rootScope.$digest();
+                        console.log("xhr.responseText is: " + xhr.responseText);
+
+                        console.log('------00000-----');
+                        $rootScope.$broadcast('hideTabs');
+                        $state.go('videos');
+                    } else {
+                        //TODO Prompt erroe
+                    }
+                };
+
+                xhr.open("POST", "/manualgen", true);
+                xhr.send(formData);
+        */
+
+
+    }
+
+    var uploadFileToS3 = function (path, file, fileName) {
+        return new Promise((resolve, reject) => {
+            let formData = new FormData();
+            formData.append('key', path + fileName);
+            formData.append('file', file, fileName);
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 204) {
+                    resolve();
+                } else if (xhr.readyState === XMLHttpRequest.DONE && xhr.status !== 204) {
+                    reject('xhr.status= ' + xhr.status);
+                }
+            };
+
+            xhr.open("POST", "http://test-kirma.s3.amazonaws.com/", true);
+            xhr.send(formData);
+        });
+    }
+
     return {
         uploadEvenet: uploadEvenet,
         getSlides: getSlides,
@@ -866,7 +891,8 @@ myApp.factory('videoService', ['$rootScope', '$state', function ($rootScope, $st
         getLink: getLink,
         getVideoByIndex: getVideoByIndex,
         loadVideoDetailsToStudio: loadVideoDetailsToStudio,
-        addSlideFromScannerImg: addSlideFromScannerImg
+        addSlideFromScannerImg: addSlideFromScannerImg,
+        generateVideo2: generateVideo2
     };
             }])
 
